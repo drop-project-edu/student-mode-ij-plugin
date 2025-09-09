@@ -1,4 +1,4 @@
-package com.github.palvesulht.studentmodeijplugin.startup
+package org.dropproject.studentmodeijplugin.startup
 
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project

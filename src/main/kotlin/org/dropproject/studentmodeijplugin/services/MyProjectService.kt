@@ -1,9 +1,9 @@
-package com.github.palvesulht.studentmodeijplugin.services
+package org.dropproject.studentmodeijplugin.services
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
-import com.github.palvesulht.studentmodeijplugin.MyBundle
+import org.dropproject.studentmodeijplugin.MyBundle
 
 @Service(Service.Level.PROJECT)
 class MyProjectService(project: Project) {

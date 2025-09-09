@@ -1,4 +1,4 @@
-package com.github.palvesulht.studentmodeijplugin
+package org.dropproject.studentmodeijplugin
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls

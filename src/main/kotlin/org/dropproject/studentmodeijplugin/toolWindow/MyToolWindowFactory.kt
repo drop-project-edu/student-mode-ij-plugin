@@ -1,4 +1,4 @@
-package com.github.palvesulht.studentmodeijplugin.toolWindow
+package org.dropproject.studentmodeijplugin.toolWindow
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
@@ -8,8 +8,8 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.content.ContentFactory
-import com.github.palvesulht.studentmodeijplugin.MyBundle
-import com.github.palvesulht.studentmodeijplugin.services.MyProjectService
+import org.dropproject.studentmodeijplugin.MyBundle
+import org.dropproject.studentmodeijplugin.services.MyProjectService
 import javax.swing.JButton
 
 

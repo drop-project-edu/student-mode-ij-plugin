@@ -9,7 +9,7 @@
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.palvesulht.studentmodeijplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.palvesulht.studentmodeijplugin.startup.MyProjectActivity" />
+        <toolWindow factoryClass="org.dropproject.studentmodeijplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <postStartupActivity implementation="org.dropproject.studentmodeijplugin.startup.MyProjectActivity" />
     </extensions>
 </idea-plugin>
