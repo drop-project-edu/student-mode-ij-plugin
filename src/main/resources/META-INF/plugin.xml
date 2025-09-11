@@ -11,15 +11,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Register the StudentModeService -->
         <service serviceImplementation="org.dropproject.studentmodeijplugin.services.StudentModeService"/>
-        
-        <!-- Disable auto-completion when student mode is enabled -->
-        <completion.contributor language="" implementationClass="org.dropproject.studentmodeijplugin.completion.StudentModeCompletionContributor"/>
-        
-        <!-- Disable inspections/hints when student mode is enabled -->
-        <inspectionSuppressor implementation="org.dropproject.studentmodeijplugin.inspections.StudentModeInspectionSuppressor"/>
-        
-        <!-- AI disabling component -->
-        <postStartupActivity implementation="org.dropproject.studentmodeijplugin.ai.StudentModeAIDisabler"/>
 
         <!-- Startup activity to restore settings if needed -->
         <postStartupActivity implementation="org.dropproject.studentmodeijplugin.startup.StudentModeStartupActivity"/>

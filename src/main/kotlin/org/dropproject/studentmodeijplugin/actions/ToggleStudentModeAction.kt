@@ -45,8 +45,7 @@ class ToggleStudentModeAction : AnAction() {
         val isEnabled = service.isEnabled
 
         // Update text and icon based on current state
-        e.presentation.text = if (isEnabled) "Turn OFF Student Mode" else "Turn ON Student Mode"
-        e.presentation.description = if (isEnabled) {
+        e.presentation.text = if (isEnabled) {
             "Student Mode ON - All hints and AI help have been suppressed, use your brain"
         } else {
             "Normal Mode ON - Use all the power of hints and AI"

@@ -1,6 +1,7 @@
 package org.dropproject.studentmodeijplugin.services
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Service
@@ -20,7 +21,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
     data class PluginState(
         var isEnabled: Boolean = false,
         var originalQuickFixes: Boolean = true,
-        var originalIntentionPreview: Boolean = true
+        var originalIntentionPreview: Boolean = true,
+        var originalTooltipActions: Boolean = true
     )
 
     private var state = PluginState()
@@ -54,10 +56,13 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         // ALWAYS capture current settings before disabling (user might have changed them)
         state.originalQuickFixes = getQuickFixesEnabled()
         state.originalIntentionPreview = getIntentionPreviewEnabled()
-        logger.info("Current settings captured: quickFixes=${state.originalQuickFixes}, preview=${state.originalIntentionPreview}")
+        val properties = PropertiesComponent.getInstance()
+        state.originalTooltipActions = properties.getBoolean("tooltips.show.actions.in.key", true)
+        logger.info("Current settings captured: quickFixes=${state.originalQuickFixes}, preview=${state.originalIntentionPreview}, tooltips=${state.originalTooltipActions}")
 
-        // Disable only quick fix features
+        // Disable features
         disableQuickFixes()
+        properties.setValue("tooltips.show.actions.in.key", false, true)
 
         // Refresh code analysis for all open projects
         ProjectManager.getInstance().openProjects.forEach { project ->
@@ -71,8 +76,10 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         // Restore original settings
         setQuickFixesEnabled(state.originalQuickFixes)
         setIntentionPreviewEnabled(state.originalIntentionPreview)
+        val properties = PropertiesComponent.getInstance()
+        properties.setValue("tooltips.show.actions.in.key", state.originalTooltipActions, true)
 
-        logger.info("Restored settings: quickFixes=${state.originalQuickFixes}, preview=${state.originalIntentionPreview}")
+        logger.info("Restored settings: quickFixes=${state.originalQuickFixes}, preview=${state.originalIntentionPreview}, tooltips=${state.originalTooltipActions}")
 
         // Refresh code analysis for all open projects
         ProjectManager.getInstance().openProjects.forEach { project ->
