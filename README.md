@@ -1,29 +1,53 @@
-# student-mode-ij-plugin
+# Student Mode IntelliJ Plugin
 
 ![Build](https://github.com/drop-project-edu/student-mode-ij-plugin/workflows/Build/badge.svg)
 [![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
 
-## Template ToDo list
-- [x] Create a new [IntelliJ Platform Plugin Template][template] project.
-- [ ] Get familiar with the [template documentation][template].
-- [ ] Adjust the [pluginGroup](./gradle.properties) and [pluginName](./gradle.properties), as well as the [id](./src/main/resources/META-INF/plugin.xml) and [sources package](./src/main/kotlin).
-- [ ] Adjust the plugin description in `README` (see [Tips][docs:plugin-description])
-- [ ] Review the [Legal Agreements](https://plugins.jetbrains.com/docs/marketplace/legal-agreements.html?from=IJPluginTemplate).
-- [ ] [Publish a plugin manually](https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginTemplate) for the first time.
-- [ ] Set the `MARKETPLACE_ID` in the above README badges. You can obtain it once the plugin is published to JetBrains Marketplace.
-- [ ] Set the [Plugin Signing](https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate) related [secrets](https://github.com/JetBrains/intellij-platform-plugin-template#environment-variables).
-- [ ] Set the [Deployment Token](https://plugins.jetbrains.com/docs/marketplace/plugin-upload.html?from=IJPluginTemplate).
-- [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
-- [ ] Configure the [CODECOV_TOKEN](https://docs.codecov.com/docs/quick-start) secret for automated test coverage reports on PRs
+A plugin that disables IntelliJ IDEA's assistance features to create a learning environment where students must solve problems without hints.
 
 <!-- Plugin description -->
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
+Student Mode disables quick fix light bulbs and intention previews, forcing students to understand and solve coding problems manually rather than relying on automated suggestions.
 
-This specific section is a source for the [plugin.xml](/src/main/resources/META-INF/plugin.xml) file which will be extracted by the [Gradle](/build.gradle.kts) during the build process.
-
-To keep everything working, do not remove `<!-- ... -->` sections. 
+Perfect for educational environments where instructors want to ensure students learn fundamental programming concepts without IDE assistance.
 <!-- Plugin description end -->
+
+## What does Student Mode disable?
+
+When Student Mode is **enabled**, the following IntelliJ settings are automatically **unchecked**:
+
+### Settings > Editor > General > Appearance
+- ❌ **"Show intention bulb"** - Hides the red/yellow light bulb icons that appear next to code issues
+- ❌ **"Show preview for intention actions when available"** - Disables quick previews of potential fixes
+
+### Visual Effect
+Students will no longer see:
+- 🚫 Red light bulbs next to errors (e.g., "Cannot resolve symbol")
+- 🚫 Yellow light bulbs next to warnings (e.g., "Can be simplified") 
+- 🚫 Quick fix previews when hovering over issues
+- 🚫 AI-powered "Fix with AI Assistant" suggestions
+
+### What remains available
+Students can still use:
+- ✅ Syntax highlighting and error detection
+- ✅ Basic code completion (non-AI)
+- ✅ Inlay hints (parameter names, types)
+- ✅ Debugging tools
+- ✅ Refactoring tools (via menus)
+
+## How to use
+
+1. **Install the plugin** and restart IntelliJ IDEA
+2. **Look for the Student Mode icon** in the main toolbar (right side)
+3. **Click the icon** to toggle Student Mode on/off
+4. **Verify settings**: Go to Settings > Editor > General > Appearance to see the checkboxes are unchecked when Student Mode is on
+
+## Behavior
+
+- **Always starts in OFF mode** - Never surprises users
+- **Preserves original settings** - Remembers your preferences before first toggle
+- **Perfect restoration** - When turned off, restores exactly your original settings
+- **Project-specific** - Each project can have its own Student Mode state
 
 ## Installation
 
@@ -50,3 +74,7 @@ Plugin based on the [IntelliJ Platform Plugin Template][template].
 
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
 [docs:plugin-description]: https://plugins.jetbrains.com/docs/intellij/plugin-user-experience.html#plugin-description-and-presentation
+
+
+
+

@@ -6,7 +6,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.PsiErrorElementUtil
-import org.dropproject.studentmodeijplugin.services.MyProjectService
+import org.dropproject.studentmodeijplugin.services.StudentModeService
 
 @TestDataPath("\$CONTENT_ROOT/src/test/testData")
 class MyPluginTest : BasePlatformTestCase() {
@@ -29,10 +29,29 @@ class MyPluginTest : BasePlatformTestCase() {
         myFixture.testRename("foo.xml", "foo_after.xml", "a2")
     }
 
-    fun testProjectService() {
-        val projectService = project.service<MyProjectService>()
+    fun testStudentModeService() {
+        val studentModeService = project.service<StudentModeService>()
 
-        assertNotSame(projectService.getRandomNumber(), projectService.getRandomNumber())
+        // Test default state is OFF
+        assertFalse(studentModeService.isEnabled)
+
+        // Test toggle functionality
+        assertTrue(studentModeService.toggle())
+        assertTrue(studentModeService.isEnabled)
+
+        assertFalse(studentModeService.toggle())
+        assertFalse(studentModeService.isEnabled)
+    }
+
+    fun testStudentModeSetEnabled() {
+        val studentModeService = project.service<StudentModeService>()
+
+        // Test setting enabled state directly
+        studentModeService.setEnabled(true)
+        assertTrue(studentModeService.isEnabled)
+
+        studentModeService.setEnabled(false)
+        assertFalse(studentModeService.isEnabled)
     }
 
     override fun getTestDataPath() = "src/test/testData/rename"
