@@ -7,7 +7,8 @@
 A plugin that disables IntelliJ IDEA's assistance features to create a learning environment where students must solve problems without hints.
 
 <!-- Plugin description -->
-Student Mode disables quick fix light bulbs and intention previews, forcing students to understand and solve coding problems manually rather than relying on automated suggestions.
+Student Mode disables quick fix light bulbs and intention previews, forcing students to understand and solve coding problems manually rather than relying on automated suggestions. 
+It also checks for and prevents activation if AI assistant plugins are enabled, ensuring a distraction-free learning environment.
 
 Perfect for educational environments where instructors want to ensure students learn fundamental programming concepts without IDE assistance.
 <!-- Plugin description end -->
@@ -47,7 +48,7 @@ Students can still use:
 - **Always starts in OFF mode** - Never surprises users
 - **Preserves original settings** - Remembers your preferences before first toggle
 - **Perfect restoration** - When turned off, restores exactly your original settings
-- **Project-specific** - Each project can have its own Student Mode state
+- **Checks for AI plugins** - Refuses to turn on if AI assistant plugins like GitHub Copilot or Gemini are active.
 
 ## Installation
 

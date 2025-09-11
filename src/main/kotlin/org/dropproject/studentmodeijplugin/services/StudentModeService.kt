@@ -1,7 +1,10 @@
 package org.dropproject.studentmodeijplugin.services
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.notification.NotificationGroupManager
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Service
@@ -9,6 +12,7 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.ProjectManager
 
 @Service
@@ -38,9 +42,22 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
 
     val isEnabled: Boolean get() = state.isEnabled
 
-    fun toggle(): Boolean {
+    fun toggle(): Boolean? {
         val newState = !state.isEnabled
         if (newState) {
+            val activeAIPlugins = checkForActiveAIPlugins()
+            if (activeAIPlugins.isNotEmpty()) {
+                val pluginList = activeAIPlugins.joinToString(", ")
+                NotificationGroupManager.getInstance()
+                    .getNotificationGroup("Student Mode Notifications")
+                    .createNotification(
+                        "Student Mode cannot be enabled",
+                        "Please disable the following AI plugins first: $pluginList",
+                        NotificationType.ERROR
+                    )
+                    .notify(null)
+                return null // State was not changed
+            }
             enableStudentMode()
         } else {
             disableStudentMode()
@@ -48,6 +65,18 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         state.isEnabled = newState
         logger.info("Student Mode ${if (newState) "enabled" else "disabled"} globally")
         return newState
+    }
+
+    private fun checkForActiveAIPlugins(): List<String> {
+        val aiPluginIds = listOf("com.github.copilot", "com.google.gemini")
+        val activeAIPlugins = mutableListOf<String>()
+        for (pluginId in aiPluginIds) {
+            val plugin = PluginManagerCore.getPlugin(PluginId.getId(pluginId))
+            if (plugin != null && plugin.isEnabled) {
+                activeAIPlugins.add(plugin.name)
+            }
+        }
+        return activeAIPlugins
     }
 
     private fun enableStudentMode() {

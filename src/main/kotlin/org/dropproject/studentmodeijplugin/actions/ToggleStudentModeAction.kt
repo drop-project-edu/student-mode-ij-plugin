@@ -16,22 +16,24 @@ class ToggleStudentModeAction : AnAction() {
         
         val newState = service.toggle()
         
-        val message = if (newState) {
-            "Student Mode is now ENABLED\n\n" +
-            "Disabled Features:\n" +
-            "• Quick fix light bulbs (red/yellow)\n" +
-            "• Intention action previews\n\n" +
-            "Check Settings > Editor > General > Appearance\n" +
-            "to verify these are unchecked."
-        } else {
-            "Student Mode is now DISABLED\n\n" +
-            "Restored Features:\n" +
-            "• Quick fix light bulbs\n" +
-            "• Intention action previews\n\n" +
-            "Original settings restored."
+        if (newState != null) {
+            val message = if (newState) {
+                "Student Mode is now ENABLED\n\n" +
+                "Disabled Features:\n" +
+                "• Quick fix light bulbs (red/yellow)\n" +
+                "• Intention action previews\n\n" +
+                "Check Settings > Editor > General > Appearance\n" +
+                "to verify these are unchecked."
+            } else {
+                "Student Mode is now DISABLED\n\n" +
+                "Restored Features:\n" +
+                "• Quick fix light bulbs\n" +
+                "• Intention action previews\n\n" +
+                "Original settings restored."
+            }
+            
+            Messages.showInfoMessage(project, message, "Student Mode")
         }
-        
-        Messages.showInfoMessage(project, message, "Student Mode")
     }
 
     override fun update(e: AnActionEvent) {
