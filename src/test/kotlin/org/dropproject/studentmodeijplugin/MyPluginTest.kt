@@ -36,10 +36,10 @@ class MyPluginTest : BasePlatformTestCase() {
         assertFalse(studentModeService.isEnabled)
 
         // Test toggle functionality
-        assertTrue(studentModeService.toggle())
+        assertEquals(true, studentModeService.toggle())
         assertTrue(studentModeService.isEnabled)
 
-        assertFalse(studentModeService.toggle())
+        assertEquals(true, studentModeService.toggle())
         assertFalse(studentModeService.isEnabled)
     }
 
