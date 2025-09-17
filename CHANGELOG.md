@@ -4,4 +4,6 @@
 
 ## [Unreleased]
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+- Disable red/yellow light bulb icons that appear next to code issues
+- Disables quick previews of potential fixes
+- Detect the presence of the GitHub Copilot plugin, Gemini Code Assist and DeepSeek AI developer

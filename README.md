@@ -41,7 +41,6 @@ Students can still use:
 1. **Install the plugin** and restart IntelliJ IDEA
 2. **Look for the Student Mode icon** in the main toolbar (right side)
 3. **Click the icon** to toggle Student Mode on/off
-4. **Verify settings**: Go to Settings > Editor > General > Appearance to see the checkboxes are unchecked when Student Mode is on
 
 ## Behavior
 
@@ -49,26 +48,6 @@ Students can still use:
 - **Preserves original settings** - Remembers your preferences before first toggle
 - **Perfect restoration** - When turned off, restores exactly your original settings
 - **Checks for AI plugins** - Refuses to turn on if AI assistant plugins like GitHub Copilot or Gemini are active.
-
-## Installation
-
-- Using the IDE built-in plugin system:
-  
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "student-mode-ij-plugin"</kbd> >
-  <kbd>Install</kbd>
-  
-- Using JetBrains Marketplace:
-
-  Go to [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID) and install it by clicking the <kbd>Install to ...</kbd> button in case your IDE is running.
-
-  You can also download the [latest release](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID/versions) from JetBrains Marketplace and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
-
-- Manually:
-
-  Download the [latest release](https://github.com/drop-project-edu/student-mode-ij-plugin/releases/latest) and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
-
 
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].

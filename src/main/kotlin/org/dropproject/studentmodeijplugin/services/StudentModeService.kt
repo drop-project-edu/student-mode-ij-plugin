@@ -68,7 +68,11 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
     }
 
     private fun checkForActiveAIPlugins(): List<String> {
-        val aiPluginIds = listOf("com.github.copilot", "com.google.gemini")
+        val aiPluginIds = listOf(
+            "com.github.copilot",  // github copilot
+            "com.google.tools.ij.aiplugin",  // gemini code assist
+            "com.ai.engine.cty" // deepseek AI developer
+        )
         val activeAIPlugins = mutableListOf<String>()
         for (pluginId in aiPluginIds) {
             val plugin = PluginManagerCore.getPlugin(PluginId.getId(pluginId))

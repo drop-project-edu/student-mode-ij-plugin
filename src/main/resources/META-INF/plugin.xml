@@ -3,6 +3,7 @@
     <id>org.dropproject.studentmodeijplugin</id>
     <name>Student Mode</name>
     <vendor>Drop Project</vendor>
+    <icon>/icons/studentModeOff.svg</icon>
 
     <depends>com.intellij.modules.platform</depends>
 
