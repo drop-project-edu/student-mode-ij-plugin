@@ -39,7 +39,7 @@ class MyPluginTest : BasePlatformTestCase() {
         assertEquals(true, studentModeService.toggle())
         assertTrue(studentModeService.isEnabled)
 
-        assertEquals(true, studentModeService.toggle())
+        assertEquals(false, studentModeService.toggle())
         assertFalse(studentModeService.isEnabled)
     }
 
