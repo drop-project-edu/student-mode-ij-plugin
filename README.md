@@ -1,8 +1,8 @@
 # Student Mode IntelliJ Plugin
 
 ![Build](https://github.com/drop-project-edu/student-mode-ij-plugin/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
+[![Version](https://img.shields.io/jetbrains/plugin/v/28447-student-mode.svg)](https://plugins.jetbrains.com/plugin/28447-student-mode)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/28447-student-mode.svg)](https://plugins.jetbrains.com/plugin/28447-student-mode)
 
 A plugin that disables IntelliJ IDEA's assistance features to create a learning environment where students must solve problems without hints.
 
