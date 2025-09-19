@@ -14,22 +14,21 @@ class ToggleStudentModeAction : AnAction() {
         val project: Project = e.project ?: return
         val service = ApplicationManager.getApplication().getService(StudentModeService::class.java)
         
-        val newState = service.toggle()
+        val newState = service.toggle(project)
         
         if (newState != null) {
             val message = if (newState) {
                 "Student Mode is now ENABLED\n\n" +
                 "Disabled Features:\n" +
                 "• Quick fix light bulbs (red/yellow)\n" +
-                "• Intention action previews\n\n" +
-                "Check Settings > Editor > General > Appearance\n" +
-                "to verify these are unchecked."
+                "• Intention action previews\n" +
+                "• AI assistance features"
             } else {
                 "Student Mode is now DISABLED\n\n" +
                 "Restored Features:\n" +
                 "• Quick fix light bulbs\n" +
-                "• Intention action previews\n\n" +
-                "Original settings restored."
+                "• Intention action previews\n" +
+                "• AI assistance features"
             }
             
             Messages.showInfoMessage(project, message, "Student Mode")

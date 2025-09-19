@@ -8,7 +8,7 @@ A plugin that disables IntelliJ IDEA's assistance features to create a learning 
 
 <!-- Plugin description -->
 Student Mode disables quick fix light bulbs and intention previews, forcing students to understand and solve coding problems manually rather than relying on automated suggestions. 
-It also checks for and prevents activation if AI assistant plugins are enabled, ensuring a distraction-free learning environment.
+It also checks for active third-party AI plugins and prevents JetBrains AI Assistant from functioning in the project, ensuring a comprehensive AI-free learning environment.
 
 Perfect for educational environments where instructors want to ensure students learn fundamental programming concepts without IDE assistance.
 <!-- Plugin description end -->
@@ -42,12 +42,25 @@ Students can still use:
 2. **Look for the Student Mode icon** in the main toolbar (right side)
 3. **Click the icon** to toggle Student Mode on/off
 
+## .noai File Feature
+
+When Student Mode is enabled:
+- 📁 A `.noai` file is automatically created in your project root directory with the content: `"Created and managed by Student Mode plugin. Don't remove."`
+- 👁️ The plugin monitors this file every 5 seconds
+- ⚠️ If you manually delete or modify the `.noai` file, Student Mode is automatically disabled with a warning
+- 🧹 The file is automatically removed when you disable Student Mode normally
+- 🔄 Any leftover `.noai` files from previous sessions are cleaned up when IntelliJ starts
+
+**Important**: Do not manually delete or modify the `.noai` file while working in Student Mode. If you need to disable Student Mode, use the toggle button instead.
+
 ## Behavior
 
 - **Always starts in OFF mode** - Never surprises users
 - **Preserves original settings** - Remembers your preferences before first toggle
 - **Perfect restoration** - When turned off, restores exactly your original settings
-- **Checks for AI plugins** - Refuses to turn on if AI assistant plugins like GitHub Copilot or Gemini are active.
+- **Checks for AI plugins** - Refuses to turn on if AI assistant plugins like GitHub Copilot or Gemini are active
+- **File monitoring** - Continuously monitors .noai files and automatically disables Student Mode if they're manually removed
+- **Automatic cleanup** - Removes .noai files when the plugin is disabled or IntelliJ is closed
 
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].
