@@ -3,6 +3,10 @@
 # student-mode-ij-plugin Changelog
 
 ## [Unreleased]
+### Changed
+- Compiled against a more recent Intellij Platform version
+
+## [0.2.0] - 2025-09-18
 ### Added
 - Prevent JetBrains AI Assistance using a .noai file
 
