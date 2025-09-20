@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 ### Changed
+- Improve plugin compatibility
+
+## [0.2.1] - 2025-09-20
+### Changed
 - Compiled against a more recent Intellij Platform version
 
 ## [0.2.0] - 2025-09-18
