@@ -3,6 +3,14 @@
 # student-mode-ij-plugin Changelog
 
 ## [Unreleased]
+### Added
+- A status bar icon that shows whether Student Mode is currently on or off
+- Student Mode now also turns off local AI code completion suggestions
+
+### Changed
+- Improved behavior when multiple project windows are open at the same time
+
+## [0.2.2] - 2025-09-20
 ### Changed
 - Improve plugin compatibility
 
