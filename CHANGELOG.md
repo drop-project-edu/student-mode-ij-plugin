@@ -9,6 +9,7 @@
 
 ### Changed
 - Improved behavior when multiple project windows are open at the same time
+- Now requires IntelliJ IDEA 2025.2 or newer
 
 ## [0.2.2] - 2025-09-20
 ### Changed

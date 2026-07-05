@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import org.dropproject.studentmodeijplugin.statusbar.StudentModeWidgetFactory
+import org.jetbrains.completion.full.line.settings.FullLineSettings
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
@@ -56,8 +57,6 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         private const val NOAI_FILENAME = ".noai"
         private const val NOAI_CONTENT = "Created and managed by Student Mode plugin. Don't remove."
         private const val MONITORING_INTERVAL_SECONDS = 5L
-        private const val FULL_LINE_PLUGIN_ID = "org.jetbrains.completion.full.line"
-        private const val FULL_LINE_SETTINGS_CLASS = "org.jetbrains.completion.full.line.settings.FullLineSettings"
     }
 
     override fun getState(): PluginState {
@@ -132,19 +131,14 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
     }
 
     private fun checkForActiveAIPlugins(): List<String> {
-        val aiPluginIds = listOf(
-            "com.github.copilot",  // github copilot
-            "com.google.tools.ij.aiplugin",  // gemini code assist
-            "com.ai.engine.cty" // deepseek AI developer
+        // Display names are hardcoded (rather than read off the plugin descriptor) so this check only
+        // needs the public PluginManagerCore.isLoaded(PluginId), not the internal getPlugin(PluginId).
+        val aiPlugins = mapOf(
+            "com.github.copilot" to "GitHub Copilot",
+            "com.google.tools.ij.aiplugin" to "Gemini Code Assist",
+            "com.ai.engine.cty" to "DeepSeek AI Developer"
         )
-        val activeAIPlugins = mutableListOf<String>()
-        for (pluginId in aiPluginIds) {
-            val plugin = PluginManagerCore.getPlugin(PluginId.getId(pluginId))
-            if (plugin != null && plugin.isEnabled) {
-                activeAIPlugins.add(plugin.name)
-            }
-        }
-        return activeAIPlugins
+        return aiPlugins.filterKeys { PluginManagerCore.isLoaded(PluginId.getId(it)) }.values.toList()
     }
 
     private fun enableStudentMode() {
@@ -246,29 +240,13 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
 
     /**
      * The "Enable local Full Line completion suggestions" checkbox (Editor > General > Inline Completion) is
-     * backed by an internal, undocumented class of the bundled "Full Line Code Completion" plugin
-     * (org.jetbrains.completion.full.line.settings.FullLineSettings.settingsState.enable). There is no public
-     * API for it, so it's accessed via reflection and every failure is swallowed - if JetBrains changes this
-     * internal shape in a future IDE version, Student Mode should keep working for everything else.
+     * backed by the bundled "Full Line Code Completion" plugin, declared as an optional dependency in plugin.xml
+     * so this class loads. If that plugin is absent or disabled, referencing FullLineSettings throws, which is
+     * swallowed here - Student Mode should keep working for everything else regardless.
      */
-    private fun getFullLineSettingsState(): Any? {
-        return try {
-            val plugin = PluginManagerCore.getPlugin(PluginId.getId(FULL_LINE_PLUGIN_ID))
-            if (plugin == null || !plugin.isEnabled) return null
-            val classLoader = plugin.pluginClassLoader ?: return null
-            val settingsClass = Class.forName(FULL_LINE_SETTINGS_CLASS, true, classLoader)
-            val settings = ApplicationManager.getApplication().getService(settingsClass) ?: return null
-            settings.javaClass.getMethod("getSettingsState").invoke(settings)
-        } catch (e: Throwable) {
-            logger.warn("Could not access Full Line Completion settings", e)
-            null
-        }
-    }
-
     private fun getFullLineCompletionEnabled(): Boolean {
         return try {
-            val state = getFullLineSettingsState() ?: return true
-            state.javaClass.getMethod("getEnable").invoke(state) as? Boolean ?: true
+            FullLineSettings.getInstance().settingsState.enable
         } catch (e: Throwable) {
             logger.warn("Could not read Full Line Completion enabled state", e)
             true
@@ -277,8 +255,7 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
 
     private fun setFullLineCompletionEnabled(enabled: Boolean) {
         try {
-            val state = getFullLineSettingsState() ?: return
-            state.javaClass.getMethod("setEnable", Boolean::class.javaPrimitiveType).invoke(state, enabled)
+            FullLineSettings.getInstance().settingsState.enable = enabled
             logger.info("Set Full Line Completion enabled: $enabled")
         } catch (e: Throwable) {
             logger.warn("Could not set Full Line Completion enabled state", e)

@@ -1,0 +1,5 @@
+<!-- Loaded only when the optional "Full Line Code Completion" dependency (org.jetbrains.completion.full.line)
+     is present and enabled. Grants StudentModeService's classloader visibility into that plugin's classes;
+     no extensions need to be declared here. -->
+<idea-plugin>
+</idea-plugin>

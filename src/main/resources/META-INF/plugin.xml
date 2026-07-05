@@ -5,6 +5,9 @@
     <vendor>Drop Project</vendor>
 
     <depends>com.intellij.modules.java</depends>
+    <!-- Soft dependency on the bundled Full Line Code Completion plugin, so Student Mode can turn off its
+         local inline completion suggestions. Optional: Student Mode still works fully if it's absent/disabled. -->
+    <depends optional="true" config-file="student-mode-fullline.xml">org.jetbrains.completion.full.line</depends>
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
