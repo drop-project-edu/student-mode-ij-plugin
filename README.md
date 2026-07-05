@@ -6,6 +6,8 @@
 
 A plugin that disables IntelliJ IDEA's assistance features to create a learning environment where students must solve problems without hints.
 
+Requires IntelliJ IDEA 2025.2 or newer.
+
 <!-- Plugin description -->
 Student Mode disables quick fix light bulbs and intention previews, forcing students to understand and solve coding problems manually rather than relying on automated suggestions. 
 It also checks for active third-party AI plugins and prevents JetBrains AI Assistant from functioning in the project, ensuring a comprehensive AI-free learning environment.
@@ -21,12 +23,16 @@ When Student Mode is **enabled**, the following IntelliJ settings are automatica
 - ❌ **"Show intention bulb"** - Hides the red/yellow light bulb icons that appear next to code issues
 - ❌ **"Show preview for intention actions when available"** - Disables quick previews of potential fixes
 
+### Settings > Editor > General > Inline Completion
+- ❌ **"Enable local Full Line completion suggestions"** - Turns off local AI-based code completion suggestions
+
 ### Visual Effect
 Students will no longer see:
 - 🚫 Red light bulbs next to errors (e.g., "Cannot resolve symbol")
 - 🚫 Yellow light bulbs next to warnings (e.g., "Can be simplified") 
 - 🚫 Quick fix previews when hovering over issues
 - 🚫 AI-powered "Fix with AI Assistant" suggestions
+- 🚫 Local AI code completion suggestions
 
 ### What remains available
 Students can still use:
@@ -41,6 +47,7 @@ Students can still use:
 1. **Install the plugin** and restart IntelliJ IDEA
 2. **Look for the Student Mode icon** in the main toolbar (right side)
 3. **Click the icon** to toggle Student Mode on/off
+4. **Check the status bar** at the bottom of the window for an icon showing whether Student Mode is currently on or off
 
 ## .noai File Feature
 
