@@ -12,11 +12,20 @@
         <!-- Register the StudentModeService -->
         <service serviceImplementation="org.dropproject.studentmodeijplugin.services.StudentModeService"/>
 
-        <!-- Startup activity to restore settings if needed -->
-        <postStartupActivity implementation="org.dropproject.studentmodeijplugin.startup.StudentModeStartupActivity"/>
-
         <notificationGroup id="Student Mode Notifications" displayType="BALLOON"/>
+
+        <!-- Status bar badge that only appears while Student Mode is on, so a proctor can verify it at a glance -->
+        <statusBarWidgetFactory id="StudentModeStatusBarWidget"
+                                 implementation="org.dropproject.studentmodeijplugin.statusbar.StudentModeWidgetFactory"
+                                 order="first"/>
     </extensions>
+
+    <applicationListeners>
+        <!-- Keeps the .noai file in sync with Student Mode across every project window:
+             creates/cleans it up on open, deletes it when that window closes. -->
+        <listener class="org.dropproject.studentmodeijplugin.listeners.StudentModeProjectListener"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
 
     <actions>
         <!-- Student Mode Toggle Action in Toolbar -->

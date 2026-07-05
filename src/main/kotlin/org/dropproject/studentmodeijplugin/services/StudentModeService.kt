@@ -18,6 +18,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
+import org.dropproject.studentmodeijplugin.statusbar.StudentModeWidgetFactory
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
@@ -61,6 +63,14 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
 
     override fun loadState(state: PluginState) {
         this.state = state
+        if (state.isEnabled) {
+            // A new IDE session always starts in Normal Mode. If this is still true here,
+            // the previous session ended abnormally (crash/force-quit) while Student Mode
+            // was on, so restore the settings it changed before resetting the flag.
+            logger.info("Student Mode was left ON from a previous session - restoring settings and resetting to OFF")
+            disableStudentMode()
+            this.state.isEnabled = false
+        }
     }
 
     val isEnabled: Boolean get() = state.isEnabled
@@ -82,16 +92,40 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
                 return null // State was not changed
             }
             enableStudentMode()
-            project?.let { createNoAiFile(it) }
+            ProjectManager.getInstance().openProjects.forEach { createNoAiFile(it) }
             startMonitoring()
         } else {
             disableStudentMode()
-            project?.let { removeNoAiFile(it) }
+            ProjectManager.getInstance().openProjects.forEach { removeNoAiFile(it) }
             stopMonitoring()
         }
         state.isEnabled = newState
         logger.info("Student Mode ${if (newState) "enabled" else "disabled"} globally")
+        refreshStatusBarWidgets()
         return newState
+    }
+
+    private fun refreshStatusBarWidgets() {
+        ProjectManager.getInstance().openProjects.forEach { project ->
+            project.getService(StatusBarWidgetsManager::class.java).updateWidget(StudentModeWidgetFactory::class.java)
+        }
+    }
+
+    /** Called when a project window finishes opening, for every project (including ones restored at IDE startup). */
+    fun onProjectOpened(project: Project) {
+        if (state.isEnabled) {
+            createNoAiFile(project)
+            startMonitoring()
+        } else {
+            cleanupStrayNoAiFile(project)
+        }
+    }
+
+    /** Called when a specific project window is closing, independent of other open windows or app shutdown. */
+    fun onProjectClosing(project: Project) {
+        if (state.isEnabled) {
+            removeNoAiFile(project)
+        }
     }
 
     private fun checkForActiveAIPlugins(): List<String> {
@@ -317,7 +351,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
                     ApplicationManager.getApplication().invokeLater {
                         state.isEnabled = false
                         disableStudentMode()
-                        
+                        refreshStatusBarWidgets()
+
                         NotificationGroupManager.getInstance()
                             .getNotificationGroup("Student Mode Notifications")
                             .createNotification(
@@ -368,20 +403,7 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         projectNoaiFiles.clear()
     }
 
-    fun runStartupCheck() {
-        if (state.isEnabled) {
-            logger.info("Student Mode was left ON. Restoring settings and disabling.")
-            disableStudentMode()
-            state.isEnabled = false
-        }
-        
-        // Always clean up any .noai files from previous sessions on startup
-        ProjectManager.getInstance().openProjects.forEach { project ->
-            cleanupNoAiFileOnStartup(project)
-        }
-    }
-    
-    private fun cleanupNoAiFileOnStartup(project: Project) {
+    private fun cleanupStrayNoAiFile(project: Project) {
         try {
             val projectPath = project.basePath ?: return
             val noaiFile = File(projectPath, NOAI_FILENAME)
