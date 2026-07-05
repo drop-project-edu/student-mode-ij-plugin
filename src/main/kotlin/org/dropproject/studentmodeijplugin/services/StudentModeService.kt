@@ -38,7 +38,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         var isEnabled: Boolean = false,
         var originalQuickFixes: Boolean = true,
         var originalIntentionPreview: Boolean = true,
-        var originalTooltipActions: Boolean = true
+        var originalTooltipActions: Boolean = true,
+        var originalFullLineCompletionEnabled: Boolean = true
     )
 
     private var state = PluginState()
@@ -55,6 +56,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         private const val NOAI_FILENAME = ".noai"
         private const val NOAI_CONTENT = "Created and managed by Student Mode plugin. Don't remove."
         private const val MONITORING_INTERVAL_SECONDS = 5L
+        private const val FULL_LINE_PLUGIN_ID = "org.jetbrains.completion.full.line"
+        private const val FULL_LINE_SETTINGS_CLASS = "org.jetbrains.completion.full.line.settings.FullLineSettings"
     }
 
     override fun getState(): PluginState {
@@ -152,11 +155,13 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         state.originalIntentionPreview = getIntentionPreviewEnabled()
         val properties = PropertiesComponent.getInstance()
         state.originalTooltipActions = properties.getBoolean("tooltips.show.actions.in.key", true)
-        logger.info("Current settings captured: quickFixes=${state.originalQuickFixes}, preview=${state.originalIntentionPreview}, tooltips=${state.originalTooltipActions}")
+        state.originalFullLineCompletionEnabled = getFullLineCompletionEnabled()
+        logger.info("Current settings captured: quickFixes=${state.originalQuickFixes}, preview=${state.originalIntentionPreview}, tooltips=${state.originalTooltipActions}, fullLineCompletion=${state.originalFullLineCompletionEnabled}")
 
         // Disable features
         disableQuickFixes()
         properties.setValue("tooltips.show.actions.in.key", false, true)
+        setFullLineCompletionEnabled(false)
 
         // Refresh code analysis for all open projects
         ProjectManager.getInstance().openProjects.forEach { project ->
@@ -172,8 +177,9 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         setIntentionPreviewEnabled(state.originalIntentionPreview)
         val properties = PropertiesComponent.getInstance()
         properties.setValue("tooltips.show.actions.in.key", state.originalTooltipActions, true)
+        setFullLineCompletionEnabled(state.originalFullLineCompletionEnabled)
 
-        logger.info("Restored settings: quickFixes=${state.originalQuickFixes}, preview=${state.originalIntentionPreview}, tooltips=${state.originalTooltipActions}")
+        logger.info("Restored settings: quickFixes=${state.originalQuickFixes}, preview=${state.originalIntentionPreview}, tooltips=${state.originalTooltipActions}, fullLineCompletion=${state.originalFullLineCompletionEnabled}")
 
         // Refresh code analysis for all open projects
         ProjectManager.getInstance().openProjects.forEach { project ->
@@ -235,6 +241,47 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
             }
         } catch (e: Exception) {
             logger.warn("Could not set intention preview state", e)
+        }
+    }
+
+    /**
+     * The "Enable local Full Line completion suggestions" checkbox (Editor > General > Inline Completion) is
+     * backed by an internal, undocumented class of the bundled "Full Line Code Completion" plugin
+     * (org.jetbrains.completion.full.line.settings.FullLineSettings.settingsState.enable). There is no public
+     * API for it, so it's accessed via reflection and every failure is swallowed - if JetBrains changes this
+     * internal shape in a future IDE version, Student Mode should keep working for everything else.
+     */
+    private fun getFullLineSettingsState(): Any? {
+        return try {
+            val plugin = PluginManagerCore.getPlugin(PluginId.getId(FULL_LINE_PLUGIN_ID))
+            if (plugin == null || !plugin.isEnabled) return null
+            val classLoader = plugin.pluginClassLoader ?: return null
+            val settingsClass = Class.forName(FULL_LINE_SETTINGS_CLASS, true, classLoader)
+            val settings = ApplicationManager.getApplication().getService(settingsClass) ?: return null
+            settings.javaClass.getMethod("getSettingsState").invoke(settings)
+        } catch (e: Throwable) {
+            logger.warn("Could not access Full Line Completion settings", e)
+            null
+        }
+    }
+
+    private fun getFullLineCompletionEnabled(): Boolean {
+        return try {
+            val state = getFullLineSettingsState() ?: return true
+            state.javaClass.getMethod("getEnable").invoke(state) as? Boolean ?: true
+        } catch (e: Throwable) {
+            logger.warn("Could not read Full Line Completion enabled state", e)
+            true
+        }
+    }
+
+    private fun setFullLineCompletionEnabled(enabled: Boolean) {
+        try {
+            val state = getFullLineSettingsState() ?: return
+            state.javaClass.getMethod("setEnable", Boolean::class.javaPrimitiveType).invoke(state, enabled)
+            logger.info("Set Full Line Completion enabled: $enabled")
+        } catch (e: Throwable) {
+            logger.warn("Could not set Full Line Completion enabled state", e)
         }
     }
 

@@ -22,12 +22,14 @@ class ToggleStudentModeAction : AnAction() {
                 "Disabled Features:\n" +
                 "• Quick fix light bulbs (red/yellow)\n" +
                 "• Intention action previews\n" +
+                "• Local inline completion suggestions\n" +
                 "• AI assistance features"
             } else {
                 "Student Mode is now DISABLED\n\n" +
                 "Restored Features:\n" +
                 "• Quick fix light bulbs\n" +
                 "• Intention action previews\n" +
+                "• Local inline completion suggestions\n" +
                 "• AI assistance features"
             }
             
