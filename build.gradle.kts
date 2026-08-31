@@ -1,4 +1,5 @@
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.changelog.ChangelogSectionUrlBuilder
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
@@ -113,6 +114,20 @@ intellijPlatform {
 changelog {
     groups.empty()
     repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
+
+    // This project's release tags are not "v"-prefixed (0.3.0, not v0.3.0), but the plugin's
+    // default section URL builder assumes they are, which yields 404 compare links.
+    sectionUrlBuilder = ChangelogSectionUrlBuilder { repositoryUrl, currentVersion, previousVersion, isUnreleased ->
+        repositoryUrl + when {
+            isUnreleased -> when (previousVersion) {
+                null -> "/commits"
+                else -> "/compare/$previousVersion...HEAD"
+            }
+
+            previousVersion == null -> "/commits/$currentVersion"
+            else -> "/compare/$previousVersion...$currentVersion"
+        }
+    }
 }
 
 // Configure Gradle Kover Plugin - read more: https://github.com/Kotlin/kotlinx-kover#configuration
