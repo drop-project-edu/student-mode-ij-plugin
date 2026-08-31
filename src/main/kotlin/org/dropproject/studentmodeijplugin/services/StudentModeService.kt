@@ -23,13 +23,14 @@ import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import org.dropproject.studentmodeijplugin.statusbar.StudentModeWidgetFactory
 import org.jetbrains.completion.full.line.settings.FullLineSettings
 import java.io.File
+import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-@Service
+@Service(Service.Level.APP)
 @State(
     name = "org.dropproject.studentmodeijplugin.services.StudentModeService",
     storages = [Storage("StudentMode.xml")]
@@ -58,6 +59,11 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         private const val NOAI_FILENAME = ".noai"
         private const val NOAI_CONTENT = "Created and managed by Student Mode plugin. Don't remove."
         private const val MONITORING_INTERVAL_SECONDS = 5L
+        private const val ML_COMPLETION_SETTINGS_CLASS =
+            "com.intellij.ml.inline.completion.impl.configuration.MLCompletionSettings"
+
+        /** Newest name first: 262 renamed 261's setInlineCompletionEnabled to setCompletionEnabled. */
+        private val ML_COMPLETION_SETTERS = listOf("setCompletionEnabled", "setInlineCompletionEnabled")
     }
 
     override fun getState(): PluginState {
@@ -250,31 +256,115 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
     }
 
     /**
-     * The "Enable local Full Line completion suggestions" checkbox (Editor > General > Inline Completion) is
-     * backed by the bundled "Full Line Code Completion" plugin, declared as an optional dependency in plugin.xml
-     * so this class loads. If that plugin is absent or disabled, referencing FullLineSettings throws, which is
-     * swallowed here - Student Mode should keep working for everything else regardless.
+     * The inline completion checkbox (Editor > General > Inline Completion) is backed by the bundled
+     * "Full Line Code Completion" plugin, declared as an optional dependency in plugin.xml so its classes
+     * load. If that plugin is absent or disabled, reaching for them fails, which is swallowed here -
+     * Student Mode should keep working for everything else regardless.
+     *
+     * Build 262 moved the setting to MLCompletionSettings.completionEnabled and deprecated
+     * FullLineSettings.settingsState.enable, which still accepts writes there but no longer drives the
+     * feature. Builds below 262, which this plugin still supports, ship MLCompletionSettings without that
+     * method, so it is called reflectively: a direct call compiles, but the plugin verifier then reports an
+     * unresolved method against every one of those builds.
      */
     private fun getFullLineCompletionEnabled(): Boolean {
+        mlCompletionSettings()?.let { settings ->
+            readMlCompletionEnabled(settings)?.let { return it }
+        }
         return try {
+            @Suppress("DEPRECATION")
             FullLineSettings.getInstance().settingsState.enable
         } catch (e: ProcessCanceledException) {
             throw e
         } catch (e: Throwable) {
-            logger.warn("Could not read Full Line Completion enabled state", e)
+            logger.warn("Could not read inline completion enabled state", e)
             true
         }
     }
 
     private fun setFullLineCompletionEnabled(enabled: Boolean) {
+        val settings = mlCompletionSettings()
+        if (settings != null && writeMlCompletionEnabled(settings, enabled)) {
+            logger.info("Set inline completion enabled via MLCompletionSettings: $enabled")
+            return
+        }
         try {
+            @Suppress("DEPRECATION")
             FullLineSettings.getInstance().settingsState.enable = enabled
-            logger.info("Set Full Line Completion enabled: $enabled")
+            logger.info("Set inline completion enabled via FullLineSettings: $enabled")
         } catch (e: ProcessCanceledException) {
             throw e
         } catch (e: Throwable) {
-            logger.warn("Could not set Full Line Completion enabled state", e)
+            logger.warn("Could not set inline completion enabled state", e)
         }
+    }
+
+    /** The MLCompletionSettings service on IDE builds that ship it, or null on the ones that do not. */
+    private fun mlCompletionSettings(): Any? =
+        try {
+            val settingsClass = Class.forName(ML_COMPLETION_SETTINGS_CLASS, true, javaClass.classLoader)
+            ApplicationManager.getApplication().getService(settingsClass)
+        } catch (e: ProcessCanceledException) {
+            throw e
+        } catch (e: Throwable) {
+            logger.debug("MLCompletionSettings is not available on this IDE build", e)
+            null
+        }
+
+    /**
+     * 262 exposes a getter on the settings object itself; 261 only exposes one on its state object.
+     * Builds at or below 253 have neither, and are handled by the FullLineSettings fallback.
+     */
+    private fun readMlCompletionEnabled(settings: Any): Boolean? {
+        try {
+            return settings.javaClass.getMethod("isCompletionEnabled").invoke(settings) as Boolean
+        } catch (e: NoSuchMethodException) {
+            // 261 and older: try the state object below.
+        } catch (e: InvocationTargetException) {
+            (e.targetException as? ProcessCanceledException)?.let { throw it }
+            logger.warn("Could not read MLCompletionSettings.completionEnabled", e)
+            return null
+        } catch (e: Throwable) {
+            logger.debug("Could not read MLCompletionSettings.completionEnabled", e)
+            return null
+        }
+        return try {
+            val state = settings.javaClass.getMethod("getState").invoke(settings) ?: return null
+            state.javaClass.getMethod("getCompletionEnabled").invoke(state) as Boolean
+        } catch (e: InvocationTargetException) {
+            (e.targetException as? ProcessCanceledException)?.let { throw it }
+            logger.warn("Could not read MLCompletionSettings state", e)
+            null
+        } catch (e: Throwable) {
+            logger.debug("MLCompletionSettings state has no completionEnabled on this IDE build", e)
+            null
+        }
+    }
+
+    /**
+     * The setter was renamed between builds: setInlineCompletionEnabled on 261, setCompletionEnabled on
+     * 262. Both notify listeners, so they are preferred over writing the state object directly.
+     */
+    private fun writeMlCompletionEnabled(settings: Any, enabled: Boolean): Boolean {
+        for (name in ML_COMPLETION_SETTERS) {
+            try {
+                settings.javaClass
+                    .getMethod(name, Boolean::class.javaPrimitiveType)
+                    .invoke(settings, enabled)
+                return true
+            } catch (e: NoSuchMethodException) {
+                continue
+            } catch (e: InvocationTargetException) {
+                (e.targetException as? ProcessCanceledException)?.let { throw it }
+                logger.warn("Could not call MLCompletionSettings.$name", e)
+                return false
+            } catch (e: Throwable) {
+                logger.debug("Could not call MLCompletionSettings.$name", e)
+                return false
+            }
+        }
+        logger.debug("MLCompletionSettings has no known enable setter on this IDE build")
+        return false
     }
 
     fun setEnabled(enabled: Boolean, project: Project? = null) {

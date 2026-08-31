@@ -105,8 +105,11 @@ intellijPlatform {
 
     pluginVerification {
         ides {
-            ide("IC", "2025.2")
-            ide("WS", "2025.2")
+            create("IC", "2025.2")
+            create("WS", "2025.2")
+            create("IU", "2025.3.5")
+            create("IU", "2026.2.1")
+            create("WS", "2026.2.1")
         }
     }
 }
@@ -157,6 +160,29 @@ intellijPlatformTesting {
         register("runWebStorm") {
             type = IntelliJPlatformType.WebStorm
             version = "2025.2"
+        }
+
+        // One task per build family the plugin supports, so the inline-completion settings can be
+        // checked by hand on each.
+        register("runIde252") {
+            type = IntelliJPlatformType.IntellijIdeaCommunity
+            version = "2025.2"
+        }
+
+        register("runIde253") {
+            type = IntelliJPlatformType.IntellijIdeaUltimate
+            version = "2025.3.5"
+        }
+
+        // Drives an IDE already installed on this machine rather than downloading another copy:
+        // ./gradlew runIdeLocal -PlocalIdePath="/path/to/IntelliJ IDEA.app/Contents"
+        register("runIdeLocal") {
+            localPath = providers.gradleProperty("localIdePath").map { file(it) }
+        }
+
+        register("runIde262") {
+            type = IntelliJPlatformType.IntellijIdeaUltimate
+            version = "2026.2.1"
         }
 
         register("runIdeForUiTests") {

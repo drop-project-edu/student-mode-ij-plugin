@@ -8,6 +8,10 @@
 
 - Replaced an IDE API that is scheduled for removal, so the plugin keeps working on future IDE versions
 
+### Fixed
+
+- Local inline completion suggestions stayed on with Student Mode enabled on IntelliJ IDEA 2026.1 and 2026.2 and their WebStorm equivalents, because the setting moved to a new place in those versions. It is now turned off there as well
+
 ## [0.4.0-beta.1] - 2026-08-31
 
 ### Added

@@ -12,9 +12,6 @@
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Register the StudentModeService -->
-        <service serviceImplementation="org.dropproject.studentmodeijplugin.services.StudentModeService"/>
-
         <notificationGroup id="Student Mode Notifications" displayType="BALLOON"/>
 
         <!-- Creates/cleans up the .noai file for every project window that opens, including ones

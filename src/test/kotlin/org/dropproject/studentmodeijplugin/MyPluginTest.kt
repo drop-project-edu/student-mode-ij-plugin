@@ -30,7 +30,7 @@ class MyPluginTest : BasePlatformTestCase() {
     }
 
     fun testStudentModeService() {
-        val studentModeService = project.service<StudentModeService>()
+        val studentModeService = service<StudentModeService>()
 
         // Test default state is OFF
         assertFalse(studentModeService.isEnabled)
@@ -44,7 +44,7 @@ class MyPluginTest : BasePlatformTestCase() {
     }
 
     fun testStudentModeSetEnabled() {
-        val studentModeService = project.service<StudentModeService>()
+        val studentModeService = service<StudentModeService>()
 
         // Test setting enabled state directly
         studentModeService.setEnabled(true)
