@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Replaced an IDE API that is scheduled for removal, so the plugin keeps working on future IDE versions
+
 ## [0.4.0-beta.1] - 2026-08-31
 
 ### Added
