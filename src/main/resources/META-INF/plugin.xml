@@ -17,6 +17,10 @@
 
         <notificationGroup id="Student Mode Notifications" displayType="BALLOON"/>
 
+        <!-- Creates/cleans up the .noai file for every project window that opens, including ones
+             restored at IDE startup -->
+        <postStartupActivity implementation="org.dropproject.studentmodeijplugin.startup.StudentModeStartupActivity"/>
+
         <!-- Status bar badge that only appears while Student Mode is on, so a proctor can verify it at a glance -->
         <statusBarWidgetFactory id="StudentModeStatusBarWidget"
                                  implementation="org.dropproject.studentmodeijplugin.statusbar.StudentModeWidgetFactory"
@@ -24,8 +28,7 @@
     </extensions>
 
     <applicationListeners>
-        <!-- Keeps the .noai file in sync with Student Mode across every project window:
-             creates/cleans it up on open, deletes it when that window closes. -->
+        <!-- Deletes the .noai file when a project window closes -->
         <listener class="org.dropproject.studentmodeijplugin.listeners.StudentModeProjectListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>

@@ -5,16 +5,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import org.dropproject.studentmodeijplugin.services.StudentModeService
 
+/**
+ * Removes the .noai file when a project window closes. The opening half is handled by
+ * [org.dropproject.studentmodeijplugin.startup.StudentModeStartupActivity], because
+ * ProjectManagerListener.projectOpened is scheduled for removal from the platform.
+ */
 class StudentModeProjectListener : ProjectManagerListener {
 
-    override fun projectOpened(project: Project) {
-        service().onProjectOpened(project)
-    }
-
     override fun projectClosing(project: Project) {
-        service().onProjectClosing(project)
+        ApplicationManager.getApplication()
+            .getService(StudentModeService::class.java)
+            .onProjectClosing(project)
     }
-
-    private fun service(): StudentModeService =
-        ApplicationManager.getApplication().getService(StudentModeService::class.java)
 }
