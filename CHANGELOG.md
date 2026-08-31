@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.4.0-beta.1] - 2026-08-31
+
 ### Added
 
 - Support for JetBrains IDEs other than IntelliJ IDEA, which the plugin was previously restricted to. Tested on IntelliJ IDEA and WebStorm; other IDEs should work but have not been verified
@@ -54,7 +56,8 @@
 - Disables quick previews of potential fixes
 - Detect the presence of the GitHub Copilot plugin, Gemini Code Assist and DeepSeek AI developer
 
-[Unreleased]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.4.0-beta.1...HEAD
+[0.4.0-beta.1]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.3.0...0.4.0-beta.1
 [0.3.0]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.2.2...0.3.0
 [0.2.2]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.2.1...0.2.2
 [0.2.1]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.2.0...0.2.1
