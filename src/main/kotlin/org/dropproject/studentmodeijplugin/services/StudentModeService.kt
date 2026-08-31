@@ -14,6 +14,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -189,6 +190,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
             editorSettings.isShowIntentionPreview = false
             
             logger.info("Disabled quick fix intentions and preview via settings")
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Exception) {
             logger.warn("Could not disable quick fix intentions", e)
         }
@@ -197,6 +200,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
     private fun getQuickFixesEnabled(): Boolean {
         return try {
             EditorSettingsExternalizable.getInstance().isShowIntentionBulb
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Exception) {
             true
         }
@@ -205,6 +210,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
     private fun getIntentionPreviewEnabled(): Boolean {
         return try {
             EditorSettingsExternalizable.getInstance().isShowIntentionPreview
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Exception) {
             true
         }
@@ -219,6 +226,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
             } else {
                 logger.warn("Couldn't set intention bulb state because EditorSettingsExternalizable is null")
             }
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Exception) {
             logger.warn("Could not set intention bulb state", e)
         }
@@ -233,6 +242,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
             } else {
                 logger.warn("Couldn't set intention preview state because EditorSettingsExternalizable is null")
             }
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Exception) {
             logger.warn("Could not set intention preview state", e)
         }
@@ -247,6 +258,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
     private fun getFullLineCompletionEnabled(): Boolean {
         return try {
             FullLineSettings.getInstance().settingsState.enable
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Throwable) {
             logger.warn("Could not read Full Line Completion enabled state", e)
             true
@@ -257,6 +270,8 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         try {
             FullLineSettings.getInstance().settingsState.enable = enabled
             logger.info("Set Full Line Completion enabled: $enabled")
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Throwable) {
             logger.warn("Could not set Full Line Completion enabled state", e)
         }
@@ -408,10 +423,18 @@ class StudentModeService : PersistentStateComponent<StudentModeService.PluginSta
         monitoringService.shutdown()
         
         if (state.isEnabled) {
-            logger.info("Student Mode was ON during shutdown - reverting settings")
-            disableStudentMode()
-            
-            // Clean up .noai files
+            // App services are already disposed during IDE shutdown, so restoring here throws.
+            // state.isEnabled stays true on disk and loadState() restores on the next start.
+            val application = ApplicationManager.getApplication()
+            if (application != null && !application.isDisposed) {
+                logger.info("Student Mode was ON while the plugin was unloaded - restoring settings now")
+                disableStudentMode()
+                state.isEnabled = false
+            } else {
+                logger.info("Student Mode was ON during IDE shutdown - settings will be restored on the next start")
+            }
+
+            // Plain file I/O, safe whether or not the application is still up.
             projectNoaiFiles.values.forEach { file ->
                 try {
                     if (file.exists()) {

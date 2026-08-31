@@ -1,6 +1,7 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.ChangelogSectionUrlBuilder
 import org.jetbrains.changelog.markdownToHTML
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
@@ -106,6 +107,7 @@ intellijPlatform {
     pluginVerification {
         ides {
             ide("IC", "2025.2")
+            ide("WS", "2025.2")
         }
     }
 }
@@ -153,6 +155,11 @@ tasks {
 
 intellijPlatformTesting {
     runIde {
+        register("runWebStorm") {
+            type = IntelliJPlatformType.WebStorm
+            version = "2025.2"
+        }
+
         register("runIdeForUiTests") {
             task {
                 jvmArgumentProviders += CommandLineArgumentProvider {

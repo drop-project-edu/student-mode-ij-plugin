@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- Support for JetBrains IDEs other than IntelliJ IDEA, which the plugin was previously restricted to. Tested on IntelliJ IDEA and WebStorm; other IDEs should work but have not been verified
+
+### Fixed
+
+- Closing the IDE with Student Mode still on left the intention bulb and preview settings switched off. They are now restored the next time the IDE starts
+
 ## [0.3.0] - 2026-07-05
 
 ### Added

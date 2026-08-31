@@ -4,7 +4,7 @@
     <name>Student Mode</name>
     <vendor>Drop Project</vendor>
 
-    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.platform</depends>
     <!-- Soft dependency on the bundled Full Line Code Completion plugin, so Student Mode can turn off its
          local inline completion suggestions. Optional: Student Mode still works fully if it's absent/disabled. -->
     <depends optional="true" config-file="student-mode-fullline.xml">org.jetbrains.completion.full.line</depends>
