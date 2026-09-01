@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.4.0-beta.2] - 2026-08-31
+
 ### Changed
 
 - Replaced an IDE API that is scheduled for removal, so the plugin keeps working on future IDE versions
@@ -11,6 +13,11 @@
 ### Fixed
 
 - Local inline completion suggestions stayed on with Student Mode enabled on IntelliJ IDEA 2026.1 and 2026.2 and their WebStorm equivalents, because the setting moved to a new place in those versions. It is now turned off there as well
+- Closing the IDE with Student Mode still on left the intention bulb and preview settings switched off. They are now restored the next time the IDE starts
+
+### Added
+
+- Support for JetBrains IDEs other than IntelliJ IDEA, which the plugin was previously restricted to. Tested on IntelliJ IDEA and WebStorm; other IDEs should work but have not been verified
 
 ## [0.4.0-beta.1] - 2026-08-31
 
@@ -64,7 +71,8 @@
 - Disables quick previews of potential fixes
 - Detect the presence of the GitHub Copilot plugin, Gemini Code Assist and DeepSeek AI developer
 
-[Unreleased]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.4.0-beta.1...HEAD
+[Unreleased]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.4.0-beta.2...HEAD
+[0.4.0-beta.2]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.4.0-beta.1...0.4.0-beta.2
 [0.4.0-beta.1]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.3.0...0.4.0-beta.1
 [0.3.0]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.2.2...0.3.0
 [0.2.2]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.2.1...0.2.2
