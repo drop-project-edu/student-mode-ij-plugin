@@ -22,6 +22,7 @@ class ToggleStudentModeAction : AnAction() {
                 "Disabled Features:\n" +
                 "• Quick fix light bulbs (red/yellow)\n" +
                 "• Intention action previews\n" +
+                "• Code suggestions\n" +
                 "• Local inline completion suggestions\n" +
                 "• AI assistance features"
             } else {
@@ -29,6 +30,7 @@ class ToggleStudentModeAction : AnAction() {
                 "Restored Features:\n" +
                 "• Quick fix light bulbs\n" +
                 "• Intention action previews\n" +
+                "• Code suggestions\n" +
                 "• Local inline completion suggestions\n" +
                 "• AI assistance features"
             }

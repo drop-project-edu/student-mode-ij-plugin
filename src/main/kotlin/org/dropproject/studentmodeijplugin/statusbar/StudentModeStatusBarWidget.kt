@@ -21,7 +21,7 @@ class StudentModeStatusBarWidget : StatusBarWidget, StatusBarWidget.TextPresenta
     override fun getAlignment(): Float = Component.CENTER_ALIGNMENT
 
     override fun getTooltipText(): String =
-        "Student Mode is ON — AI assistance, quick fixes, and intention previews are disabled"
+        "Student Mode is ON - AI assistance, code suggestions, quick fixes, and intention previews are disabled"
 
     override fun getClickConsumer(): Consumer<MouseEvent>? = null
 }

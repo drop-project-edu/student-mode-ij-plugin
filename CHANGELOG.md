@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Student Mode now hides the IDE's code suggestions - the warnings and weak warnings that tell a student how to rewrite working code - along with their tooltips, gutter marks and quick fixes. Compile errors, syntax highlighting and documentation on hover are not affected
+
 ## [0.4.0] - 2026-09-01
 
 ### Changed

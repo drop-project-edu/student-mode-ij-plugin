@@ -18,6 +18,11 @@
              restored at IDE startup -->
         <postStartupActivity implementation="org.dropproject.studentmodeijplugin.startup.StudentModeStartupActivity"/>
 
+        <!-- Hides the IDE's code suggestions (warnings, weak warnings, everything below an error)
+             while Student Mode is on, leaving compile errors and syntax highlighting untouched -->
+        <daemon.highlightInfoFilter
+                implementation="org.dropproject.studentmodeijplugin.daemon.StudentModeHighlightInfoFilter"/>
+
         <!-- Status bar badge that only appears while Student Mode is on, so a proctor can verify it at a glance -->
         <statusBarWidgetFactory id="StudentModeStatusBarWidget"
                                  implementation="org.dropproject.studentmodeijplugin.statusbar.StudentModeWidgetFactory"

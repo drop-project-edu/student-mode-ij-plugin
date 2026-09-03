@@ -9,7 +9,7 @@ A plugin that disables the IDE's assistance features to create a learning enviro
 Requires a JetBrains IDE 2025.2 or newer. Verified against IntelliJ IDEA and WebStorm.
 
 <!-- Plugin description -->
-Student Mode disables quick fix light bulbs and intention previews, forcing students to understand and solve coding problems manually rather than relying on automated suggestions. 
+Student Mode disables quick fix light bulbs, intention previews and code suggestions, forcing students to understand and solve coding problems manually rather than relying on automated suggestions. Compile errors are still shown.
 It also checks for active third-party AI plugins and prevents JetBrains AI Assistant from functioning in the project, ensuring a comprehensive AI-free learning environment.
 
 Perfect for educational environments where instructors want to ensure students learn fundamental programming concepts without IDE assistance.
@@ -28,17 +28,24 @@ When Student Mode is **enabled**, the following IDE settings are automatically *
 ### Settings > Editor > General > Inline Completion
 - ❌ **"Enable local Full Line completion suggestions"** - Turns off local AI-based code completion suggestions
 
+### Code suggestions
+- ❌ **Warnings and weak warnings** - Hidden along with their tooltips, gutter marks, Problems view entries and Alt+Enter fixes. Compile errors are not affected
+
+Unlike the settings above, this one is not a checkbox: the suggestions are filtered as the IDE produces them, so the inspection profile is left untouched.
+
 ### Visual Effect
 Students will no longer see:
 - 🚫 Red light bulbs next to errors (e.g., "Cannot resolve symbol")
 - 🚫 Yellow light bulbs next to warnings (e.g., "Can be simplified") 
 - 🚫 Quick fix previews when hovering over issues
+- 🚫 Suggestions such as "Immediately return this expression instead of assigning it to the temporary variable", and the squiggles that carry them
 - 🚫 AI-powered "Fix with AI Assistant" suggestions
 - 🚫 Local AI code completion suggestions
 
 ### What remains available
 Students can still use:
 - ✅ Syntax highlighting and error detection
+- ✅ Quick documentation on hover
 - ✅ Basic code completion (non-AI)
 - ✅ Inlay hints (parameter names, types)
 - ✅ Debugging tools
