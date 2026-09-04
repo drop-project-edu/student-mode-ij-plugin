@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-04
+
 ### Added
 
 - Student Mode now hides the IDE's code suggestions - the warnings and weak warnings that tell a student how to rewrite working code - along with their tooltips, gutter marks and quick fixes. Compile errors, syntax highlighting and documentation on hover are not affected
@@ -90,7 +92,8 @@
 - Disables quick previews of potential fixes
 - Detect the presence of the GitHub Copilot plugin, Gemini Code Assist and DeepSeek AI developer
 
-[Unreleased]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.4.0-beta.2...0.4.0
 [0.4.0-beta.2]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.4.0-beta.1...0.4.0-beta.2
 [0.4.0-beta.1]: https://github.com/drop-project-edu/student-mode-ij-plugin/compare/0.3.0...0.4.0-beta.1
